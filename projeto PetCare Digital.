@@ -1,0 +1,24 @@
+PETCARE DIGITAL — MUNDO SENAI
+================================
+
+COMO ABRIR
+1. Extraia o arquivo ZIP para uma pasta do computador.
+2. Abra a pasta PetCare_Digital_Mundo_SENAI.
+3. Dê dois cliques em index.html para abrir no navegador.
+4. Para gerar QR Code, o navegador precisa estar conectado à internet para carregar a biblioteca QRCode.js.
+
+FUNCIONALIDADES
+- Cadastro, edição e exclusão de pets.
+- Registro e exclusão de vacinas.
+- Registro e exclusão de serviços.
+- Criação e exclusão de lembretes.
+- Teste de notificações do navegador (dependem de suporte e permissão).
+- Geração e download de QR Code com informações selecionadas.
+- Dados persistidos no armazenamento local do navegador.
+
+IMPORTANTE
+- Os dados ficam neste navegador/dispositivo; não existe servidor nem sincronização.
+- Limpar os dados do navegador pode apagar os registros.
+- O QR Code pode conter informações pessoais: compartilhe apenas o necessário.
+- O projeto é demonstrativo e não substitui orientação veterinária.
+- O QR Code usa a biblioteca QRCode.js via CDN; para essa funcionalidade, é necessária conexão com a internet.
