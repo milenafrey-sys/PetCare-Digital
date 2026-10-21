@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#167a57">
+<title>PetCare Digital | Mundo SENAI</title>
+<style>
+:root{--g:#167a57;--p:#e8f6ef;--ink:#173b2d;--bg:#f5f8f6;--line:#dce8e0;--muted:#61736a}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);line-height:1.5}
+header{background:linear-gradient(120deg,#126747,#24976b);color:#fff;padding:22px max(16px,calc((100% - 1080px)/2))}
+.brand{display:flex;align-items:center;gap:12px}.logo{font-size:27px;background:#ffffff25;border-radius:15px;padding:8px 12px}h1{margin:0;font-size:clamp(1.5rem,4vw,2rem)}header p{margin:3px 0;color:#e0f5e9}
+nav{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}nav button{border:1px solid #ffffff55;background:#ffffff15;color:#fff;border-radius:999px;padding:9px 13px;font-weight:700;cursor:pointer}nav button.active,nav button:hover{background:#fff;color:var(--g)}
+main{max-width:1080px;margin:24px auto;padding:0 16px 42px}.view{display:none}.view.active{display:block}.head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+h2{margin:0 0 4px}.muted{color:var(--muted)}.small{font-size:.88rem}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:14px}
+.card{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;box-shadow:0 7px 24px #153b2d0c;margin-bottom:14px}
+.card h3{margin:0 0 10px}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin:18px 0}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:15px}.stat strong{display:block;font-size:1.8rem;color:var(--g)}
+.pethead{display:flex;align-items:center;gap:12px}.petemoji{font-size:28px;background:var(--p);padding:10px;border-radius:14px}.btn{border:0;border-radius:10px;background:var(--g);color:white;padding:10px 14px;font-weight:700;cursor:pointer}.btn.secondary{background:var(--p);color:var(--g)}.btn.danger{background:#fff0ef;color:#b42318}.btn.sm{padding:7px 10px;font-size:.85rem}.actions{display:flex;gap:7px;flex-wrap:wrap;margin-top:12px}
+form{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px}.field{display:flex;flex-direction:column;gap:5px}.full{grid-column:1/-1}label{font-size:.9rem;font-weight:700}
+input,select,textarea{font:inherit;width:100%;padding:10px;border:1px solid #cbd9d0;border-radius:9px;background:#fff;color:var(--ink)}input:focus,select:focus,textarea:focus{outline:2px solid #a8ddc0}
+.form-actions{display:flex;gap:8px;flex-wrap:wrap}.record{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}.record p{margin:4px 0}.tag{display:inline-block;border-radius:99px;background:var(--p);color:var(--g);padding:4px 9px;font-size:.8rem;font-weight:700}.empty{padding:24px;text-align:center;color:var(--muted);border:1px dashed #b8c9bf;border-radius:14px}.notice{background:#fff5dc;color:#765000;padding:12px 14px;border-radius:11px;margin:16px 0}
+#qrcode{display:inline-block;background:white;padding:12px;margin-top:12px;border:1px solid var(--line);border-radius:10px;min-height:40px}footer{text-align:center;padding:20px;color:var(--muted);font-size:.85rem}
+@media(max-width:560px){header{padding:18px 14px}main{padding:0 12px 30px;margin-top:16px}.card{padding:14px}nav button{padding:8px 10px}}
+</style>
+</head>
+<body>
+<header>
+ <div class="brand"><div class="logo">🐾</div><div><h1>PetCare Digital</h1><p>Cuidado organizado para quem faz parte da família</p></div></div>
+ <nav aria-label="Navegação">
+  <button class="active" data-view="inicio">Início</button><button data-view="pets">Pets</button><button data-view="vacinas">Vacinas</button><button data-view="servicos">Serviços</button><button data-view="lembretes">Lembretes</button><button data-view="qrcode">QR Code</button>
+ </nav>
+</header>
+<main>
+<section class="view active" id="view-inicio">
+ <div class="head"><div><h2>Bem-vindo ao PetCare! 🐶</h2><p class="muted">Gerencie os dados dos seus pets em um só lugar.</p></div><button class="btn" data-go="pets">+ Cadastrar pet</button></div>
+ <div class="stats"><div class="stat">Pets cadastrados<strong id="statPets">0</strong></div><div class="stat">Vacinas<strong id="statVacinas">0</strong></div><div class="stat">Serviços<strong id="statServicos">0</strong></div><div class="stat">Lembretes<strong id="statLembretes">0</strong></div></div>
+ <h2>Seus pets</h2><div class="grid" id="homePets"></div><div class="notice">Projeto demonstrativo: os dados ficam salvos neste navegador. Consulte um médico-veterinário para orientações de saúde.</div>
+</section>
+<section class="view" id="view-pets">
+ <div class="head"><div><h2>Cadastro de pets</h2><p class="muted">Adicione e atualize os dados dos animais.</p></div></div>
+ <div class="card"><h3 id="petFormTitle">Cadastrar novo pet</h3><form id="petForm">
+  <input type="hidden" id="petId">
+  <div class="field"><label for="petName">Nome *</label><input id="petName" required maxlength="60" placeholder="Ex.: Luna"></div>
+  <div class="field"><label for="petType">Espécie *</label><select id="petType" required><option value="">Selecione</option><option>Cachorro</option><option>Gato</option><option>Coelho</option><option>Pássaro</option><option>Outro</option></select></div>
+  <div class="field"><label for="petBreed">Raça</label><input id="petBreed" maxlength="60" placeholder="Ex.: SRD"></div>
+  <div class="field"><label for="petBirth">Nascimento</label><input id="petBirth" type="date"></div>
+  <div class="field"><label for="petWeight">Peso (kg)</label><input id="petWeight" type="number" min="0" max="999" step="0.1" placeholder="Ex.: 4,5"></div>
+  <div class="field"><label for="petNotes">Observações</label><input id="petNotes" maxlength="180" placeholder="Opcional"></div>
+  <div class="field full"><div class="form-actions"><button class="btn" type="submit" id="petSave">Salvar pet</button><button class="btn secondary" type="button" id="petCancel" hidden>Cancelar edição</button></div></div>
+ </form></div><div class="grid" id="petsList"></div>
+</section>
+<section class="view" id="view-vacinas">
+ <div class="head"><div><h2>Vacinas</h2><p class="muted">Registre aplicações e próximas doses previstas.</p></div></div>
+ <div class="card"><h3>Registrar vacina</h3><form id="vaccineForm">
+  <div class="field"><label for="vaccinePet">Pet *</label><select id="vaccinePet" required></select></div>
+  <div class="field"><label for="vaccineName">Vacina *</label><input id="vaccineName" required maxlength="80" placeholder="Ex.: Antirrábica"></div>
+  <div class="field"><label for="vaccineDate">Data da aplicação *</label><input id="vaccineDate" type="date" required></div>
+  <div class="field"><label for="vaccineNext">Próxima dose</label><input id="vaccineNext" type="date"></div>
+  <div class="field"><label for="vaccineVet">Clínica / veterinário</label><input id="vaccineVet" maxlength="100" placeholder="Opcional"></div>
+  <div class="field full"><button class="btn" type="submit">Salvar vacina</button></div>
+ </form></div><div class="list" id="vaccinesList"></div>
+</section>
+<section class="view" id="view-servicos">
+ <div class="head"><div><h2>Serviços</h2><p class="muted">Histórico de consultas, banho e outros cuidados.</p></div></div>
+ <div class="card"><h3>Registrar serviço</h3><form id="serviceForm">
+  <div class="field"><label for="servicePet">Pet *</label><select id="servicePet" required></select></div>
+  <div class="field"><label for="serviceType">Serviço *</label><select id="serviceType" required><option value="">Selecione</option><option>Consulta veterinária</option><option>Banho e tosa</option><option>Exame</option><option>Medicamento</option><option>Adestramento</option><option>Outro</option></select></div>
+  <div class="field"><label for="serviceDate">Data *</label><input id="serviceDate" type="date" required></div>
+  <div class="field"><label for="serviceCost">Valor (R$)</label><input id="serviceCost" type="number" min="0" max="999999" step="0.01" placeholder="0,00"></div>
+  <div class="field full"><label for="serviceNotes">Observações</label><textarea id="serviceNotes" rows="2" maxlength="300"></textarea></div>
+  <div class="field full"><button class="btn" type="submit">Salvar serviço</button></div>
+ </form></div><div class="list" id="servicesList"></div>
+</section>
+<section class="view" id="view-lembretes">
+ <div class="head"><div><h2>Lembretes</h2><p class="muted">Organize os próximos cuidados e compromissos.</p></div></div>
+ <div class="card"><h3>Criar lembrete</h3><form id="reminderForm">
+  <div class="field"><label for="reminderPet">Pet *</label><select id="reminderPet" required></select></div>
+  <div class="field"><label for="reminderTitle">O que lembrar? *</label><input id="reminderTitle" required maxlength="100" placeholder="Ex.: Marcar consulta"></div>
+  <div class="field"><label for="reminderDate">Data *</label><input id="reminderDate" type="date" required></div>
+  <div class="field"><label for="reminderTime">Horário</label><input id="reminderTime" type="time"></div>
+  <div class="field full"><label for="reminderNotes">Observações</label><input id="reminderNotes" maxlength="180" placeholder="Opcional"></div>
+  <div class="field full"><div class="form-actions"><button class="btn" type="submit">Salvar lembrete</button><button class="btn secondary" type="button" id="notifyBtn">Testar notificação</button></div></div>
+ </form><p class="muted small">Notificações dependem do suporte e da permissão do navegador. Os lembretes permanecem listados nesta página.</p></div><div class="list" id="remindersList"></div>
+</section>
+<section class="view" id="view-qrcode">
+ <div class="head"><div><h2>QR Code do pet</h2><p class="muted">Gere um código com informações para identificação.</p></div></div>
+ <div class="card"><form id="qrForm">
+  <div class="field"><label for="qrPet">Pet *</label><select id="qrPet" required></select></div>
+  <div class="field"><label for="qrContact">Contato do responsável</label><input id="qrContact" maxlength="100" placeholder="Telefone ou e-mail (opcional)"></div>
+  <div class="field full"><label for="qrExtra">Informação adicional</label><input id="qrExtra" maxlength="180" placeholder="Opcional"></div>
+  <div class="field full"><div class="form-actions"><button class="btn" type="submit">Gerar QR Code</button><button class="btn secondary" type="button" id="qrDownload">Baixar imagem</button></div></div>
+ </form><div id="qrcode" aria-live="polite"><span class="muted small">Selecione um pet e clique em “Gerar QR Code”.</span></div>
+ <p class="muted small">Privacidade: compartilhe apenas dados que podem ser vistos por quem escanear o código. O QR é criado no navegador.</p></div>
+</section>
+</main>
+<footer>PetCare Digital • Projeto educacional Mundo SENAI • Dados locais do navegador</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+"use strict";
+const $ = id => document.getElementById(id);
+const KEY = "petcare-digital-v1";
+const uid = () => (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : String(Date.now()) + Math.random().toString(16).slice(2);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const dateFmt = s => { if(!s) return "Não informada"; const [y,m,d]=s.split("-"); return `${d}/${m}/${y}`; };
+const money = n => Number(n||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const emoji = t => ({Cachorro:"🐶",Gato:"🐱",Coelho:"🐰",Pássaro:"🐦",Outro:"🐾"}[t]||"🐾");
+function load(){try{const x=JSON.parse(localStorage.getItem(KEY)||"{}");return {pets:Array.isArray(x.pets)?x.pets:[],vaccines:Array.isArray(x.vaccines)?x.vaccines:[],services:Array.isArray(x.services)?x.services:[],reminders:Array.isArray(x.reminders)?x.reminders:[]};}catch{return {pets:[],vaccines:[],services:[],reminders:[]};}}
+let db=load(), qrInstance=null;
+function save(){try{localStorage.setItem(KEY,JSON.stringify(db));}catch(e){alert("Não foi possível salvar. Verifique o espaço disponível no navegador.");}}
+function petName(id){return db.pets.find(p=>p.id===id)?.name||"Pet removido";}
+function empty(msg){return `<div class="empty">${esc(msg)}</div>`;}
+function go(view){document.querySelectorAll(".view").forEach(v=>v.classList.toggle("active",v.id==="view-"+view));document.querySelectorAll("nav button[data-view]").forEach(b=>b.classList.toggle("active",b.dataset.view===view));if(view==="qrcode")fillPetSelects();window.scrollTo({top:0,behavior:"smooth"});}
+document.querySelectorAll("nav button[data-view]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.view)));
+document.querySelectorAll("[data-go]").forEach(b=>b.addEventListener("click",()=>go(b.dataset.go)));
+function fillPetSelects(){["vaccinePet","servicePet","reminderPet","qrPet"].forEach(id=>{const s=$(id), old=s.value;s.innerHTML='<option value="">Selecione um pet</option>'+db.pets.map(p=>`<option value="${esc(p.id)}">${esc(p.name)}</option>`).join("");if(db.pets.some(p=>p.id===old))s.value=old;s.disabled=db.pets.length===0;});}
+function renderPetCard(p,home=false){return `<article class="card"><div class="pethead"><span class="petemoji">${emoji(p.type)}</span><div><h3>${esc(p.name)}</h3><div class="muted small">${esc(p.type)}${p.breed?" • "+esc(p.breed):""}</div></div></div><p class="small">Nascimento: ${dateFmt(p.birth)}<br>Peso: ${p.weight?esc(p.weight)+" kg":"Não informado"}${p.notes?"<br>Obs.: "+esc(p.notes):""}</p>${home?"":`<div class="actions"><button class="btn secondary sm" data-edit-pet="${esc(p.id)}">Editar</button><button class="btn danger sm" data-delete-pet="${esc(p.id)}">Excluir</button></div>`}</article>`;}
+function render(){ $("statPets").textContent=db.pets.length;$("statVacinas").textContent=db.vaccines.length;$("statServicos").textContent=db.services.length;$("statLembretes").textContent=db.reminders.length;
+$("homePets").innerHTML=db.pets.length?db.pets.map(p=>renderPetCard(p,true)).join(""):empty("Ainda não há pets cadastrados. Clique em “Cadastrar pet” para começar.");
+$("petsList").innerHTML=db.pets.length?db.pets.map(p=>renderPetCard(p)).join(""):empty("Nenhum pet cadastrado.");
+$("vaccinesList").innerHTML=db.vaccines.length?db.vaccines.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(v=>`<article class="card record"><div><h3>${esc(v.name)} <span class="tag">${esc(petName(v.petId))}</span></h3><p>Aplicação: ${dateFmt(v.date)}${v.next?" • Próxima dose: "+dateFmt(v.next):""}</p><p class="muted small">${v.vet?"Clínica/veterinário: "+esc(v.vet):""}</p></div><button class="btn danger sm" data-delete="vaccines" data-id="${esc(v.id)}">Excluir</button></article>`).join(""):empty("Nenhuma vacina registrada.");
+$("servicesList").innerHTML=db.services.length?db.services.slice().sort((a,b)=>b.date.localeCompare(a.date)).map(s=>`<article class="card record"><div><h3>${esc(s.type)} <span class="tag">${esc(petName(s.petId))}</span></h3><p>Data: ${dateFmt(s.date)} • Valor: ${money(s.cost)}</p><p class="muted small">${esc(s.notes||"")}</p></div><button class="btn danger sm" data-delete="services" data-id="${esc(s.id)}">Excluir</button></article>`).join(""):empty("Nenhum serviço registrado.");
+$("remindersList").innerHTML=db.reminders.length?db.reminders.slice().sort((a,b)=>(a.date+(a.time||"")).localeCompare(b.date+(b.time||""))).map(r=>`<article class="card record"><div><h3>${esc(r.title)} <span class="tag">${esc(petName(r.petId))}</span></h3><p>${dateFmt(r.date)}${r.time?" às "+esc(r.time):""}</p><p class="muted small">${esc(r.notes||"")}</p></div><button class="btn danger sm" data-delete="reminders" data-id="${esc(r.id)}">Concluir / excluir</button></article>`).join(""):empty("Nenhum lembrete criado.");
+fillPetSelects();
+}
+$("petForm").addEventListener("submit",e=>{e.preventDefault();const id=$("petId").value;const p={id:id||uid(),name:$("petName").value.trim(),type:$("petType").value,breed:$("petBreed").value.trim(),birth:$("petBirth").value,weight:$("petWeight").value,notes:$("petNotes").value.trim()};if(!p.name||!p.type)return;if(id){db.pets=db.pets.map(x=>x.id===id?p:x);}else db.pets.push(p);save();render();resetPetForm();alert(id?"Pet atualizado!":"Pet cadastrado!");});
+function resetPetForm(){$("petForm").reset();$("petId").value="";$("petFormTitle").textContent="Cadastrar novo pet";$("petSave").textContent="Salvar pet";$("petCancel").hidden=true;}
+$("petCancel").addEventListener("click",resetPetForm);
+$("petsList").addEventListener("click",e=>{const edit=e.target.closest("[data-edit-pet]"),del=e.target.closest("[data-delete-pet]");if(edit){const p=db.pets.find(x=>x.id===edit.dataset.editPet);if(!p)return;$("petId").value=p.id;$("petName").value=p.name;$("petType").value=p.type;$("petBreed").value=p.breed;$("petBirth").value=p.birth;$("petWeight").value=p.weight;$("petNotes").value=p.notes;$("petFormTitle").textContent="Editar pet";$("petSave").textContent="Salvar alterações";$("petCancel").hidden=false;window.scrollTo({top:0,behavior:"smooth"});}if(del&&confirm("Excluir este pet e os registros associados?")){const id=del.dataset.deletePet;db.pets=db.pets.filter(p=>p.id!==id);["vaccines","services","reminders"].forEach(k=>db[k]=db[k].filter(x=>x.petId!==id));save();render();if($("petId").value===id)resetPetForm();}});
+$("vaccineForm").addEventListener("submit",e=>{e.preventDefault();if(!db.pets.some(p=>p.id===$("vaccinePet").value)){alert("Cadastre um pet antes de registrar vacinas.");return;}db.vaccines.push({id:uid(),petId:$("vaccinePet").value,name:$("vaccineName").value.trim(),date:$("vaccineDate").value,next:$("vaccineNext").value,vet:$("vaccineVet").value.trim()});save();render();$("vaccineForm").reset();alert("Vacina registrada!");});
+$("serviceForm").addEventListener("submit",e=>{e.preventDefault();if(!db.pets.some(p=>p.id===$("servicePet").value)){alert("Cadastre um pet antes de registrar serviços.");return;}db.services.push({id:uid(),petId:$("servicePet").value,type:$("serviceType").value,date:$("serviceDate").value,cost:$("serviceCost").value,notes:$("serviceNotes").value.trim()});save();render();$("serviceForm").reset();alert("Serviço registrado!");});
+$("reminderForm").addEventListener("submit",e=>{e.preventDefault();if(!db.pets.some(p=>p.id===$("reminderPet").value)){alert("Cadastre um pet antes de criar lembretes.");return;}db.reminders.push({id:uid(),petId:$("reminderPet").value,title:$("reminderTitle").value.trim(),date:$("reminderDate").value,time:$("reminderTime").value,notes:$("reminderNotes").value.trim()});save();render();$("reminderForm").reset();alert("Lembrete salvo!");});
+$("notifyBtn").addEventListener("click",async()=>{if(!("Notification" in window)){alert("Este navegador não oferece suporte a notificações.");return;}try{let perm=Notification.permission;if(perm==="default")perm=await Notification.requestPermission();if(perm==="granted"){new Notification("PetCare Digital",{body:"As notificações estão funcionando neste navegador."});}else alert("Permissão de notificação não concedida. Você ainda pode consultar os lembretes na página.");}catch{alert("Não foi possível exibir a notificação neste contexto. Abra o site em um navegador compatível.");}});
+document.querySelector("main").addEventListener("click",e=>{const b=e.target.closest("[data-delete]");if(!b)return;const k=b.dataset.delete,id=b.dataset.id;if(!["vaccines","services","reminders"].includes(k))return;if(confirm("Deseja excluir este registro?")){db[k]=db[k].filter(x=>x.id!==id);save();render();}});
+$("qrForm").addEventListener("submit",e=>{e.preventDefault();const p=db.pets.find(x=>x.id===$("qrPet").value);if(!p){alert("Cadastre e selecione um pet primeiro.");return;}const content=["PetCare Digital",`Nome: ${p.name}`,`Espécie: ${p.type}`,`Raça: ${p.breed||"Não informada"}`,`Contato: ${$("qrContact").value.trim()||"Não informado"}`,`Informação: ${$("qrExtra").value.trim()||"Não informada"}`].join("\\n");const el=$("qrcode");el.innerHTML="";if(typeof QRCode==="undefined"){el.textContent="Não foi possível carregar a biblioteca de QR Code. Verifique sua conexão e tente novamente.";return;}qrInstance=new QRCode(el,{text:content,width:220,height:220,colorDark:"#173b2d",colorLight:"#ffffff",correctLevel:QRCode.CorrectLevel.M});});
+$("qrDownload").addEventListener("click",()=>{const el=$("qrcode"),canvas=el.querySelector("canvas"),img=el.querySelector("img");let url=canvas?canvas.toDataURL("image/png"):img?.src;if(!url){alert("Gere um QR Code antes de baixar.");return;}const a=document.createElement("a");a.href=url;a.download="petcare-qrcode.png";document.body.appendChild(a);a.click();a.remove();});
+render();
+</script>
+</body>
+</html>
